@@ -23,10 +23,12 @@ private:
             Node* next;
         };
 
-    void add(int number, Node *node);
     Node* head{};
     Node* current{};
-    int count{};
+    Node* previous{};
+    int count{0};
+
+    void findInsertPos(Node* node);
     void pop();
 };
 

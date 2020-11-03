@@ -30,34 +30,58 @@ Sorted_List::~Sorted_List()
 //Adds an element in the listed, sorted in ascending order.
 void Sorted_List::add(int number){
 
-    //Adds element first if list empty.
+    Node* tempNode = new Node{number, nullptr};
+
+    //Tom lista
     if(is_empty()){
-        head = new Node{number, nullptr};
-        return;
+        head = tempNode;
     }
     else {
+        
         current = head;
-        add(number, nullptr);
+        previous = nullptr;
+
+        //Körs tills den hittar en plats där current är större
+        //än den nya noden.
+        findInsertPos(tempNode);
+
+        //Först
+        if(current == head){
+            tempNode->next = head;
+            head = tempNode;
+        }
+        //Inte först
+        else {
+            tempNode->next = current;
+            previous->next = tempNode;
+        }
+
+        //Resettar värdena inför nästa add
+        current = head;
+        previous = nullptr;
+        count++;
     }
 }
 
-void Sorted_List::add(int number, Node *node){
-    
-    //Adds first
-    if(number < current->value){
-        head = new Node{number, head};
-    }
-
-    //Adds last if the end is found
-    if(current->next == nullptr){
-        current->next = new Node{number, nullptr};
+void Sorted_List::findInsertPos(Node* node){
+    if(current != nullptr){
+        //Stannar när current->value är större än temp->value.
+        //Sätter previous och current för att senare kunna stoppa in temp.
+        if(node->value > current->value){
+            previous = current;
+            current = current->next;
+            findInsertPos(node);
+        }else{
+            return;
+        }
     }
 }
+
 
 //Returns true if the list has no elements.
 bool Sorted_List::is_empty()
 {
-    return head == nullptr;
+    return count == 0;
 }
 
 //Removes a specific number in the list
@@ -68,6 +92,8 @@ bool Sorted_List::remove()
         throw logic_error("List is empty");
     }
 
+
+    count--;
     return 0;
 }
 
@@ -81,10 +107,10 @@ void Sorted_List::pop()
         throw logic_error("List is empty");
     }
 
-    Node* tmp = head;
+    Node* temp = head;
     head = head->next;
-    tmp->next = nullptr;
-    delete tmp;
+    temp->next = nullptr;
+    delete temp;
 }
 
 //Returns the number of elements in the list
